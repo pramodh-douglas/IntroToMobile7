@@ -2,16 +2,22 @@ package com.example.gridviewdemo;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecyclerViewActivity extends AppCompatActivity {
+public class RecyclerViewActivity extends AppCompatActivity implements ImageRecyclerViewAdapter.OnItemClickListener {
     List<GalleryImage> ImageList = new ArrayList<>();
+
+    ImageView imgViewLarge2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,14 +26,38 @@ public class RecyclerViewActivity extends AppCompatActivity {
         AddData();
 
         RecyclerView recyclerViewImages = findViewById(R.id.recyclerViewImages);
-        ImageView imgViewLarge2 = findViewById(R.id.imgViewLarge2);
+        imgViewLarge2 = findViewById(R.id.imgViewLarge2);
 
-        ImageRecyclerViewAdapter myAdapter
-                = new ImageRecyclerViewAdapter(ImageList);
+        // ImageRecyclerViewAdapter myAdapter
+        //        = new ImageRecyclerViewAdapter(ImageList);
+
+        /*ImageRecyclerViewAdapter myAdapter = new ImageRecyclerViewAdapter(ImageList, new ImageRecyclerViewAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int i) {
+                Log.d("MINE", "i " + ImageList.get(i).getImgPic());
+                if(i != 1)
+                    imgViewLarge2.setImageResource(ImageList.get(i).getImgPic());
+            }
+        });*/
+
+        ImageRecyclerViewAdapter myAdapter = new ImageRecyclerViewAdapter(ImageList, this);
+
+        // linear layout manager
+        // LinearLayoutManager lm = new LinearLayoutManager(this);
 
         GridLayoutManager gm = new GridLayoutManager(this,2);
         recyclerViewImages.setAdapter(myAdapter);
         recyclerViewImages.setLayoutManager(gm);
+
+        Button btnShowImage = findViewById(R.id.btnShowImage);
+        btnShowImage.setOnClickListener((View view) -> {
+            int selId = myAdapter.getSelectedInd();
+            if (selId != -1)
+                imgViewLarge2.setImageResource(ImageList.get(selId).getImgPic());
+            else
+                imgViewLarge2.setImageResource(0);
+
+        });
 
     }
     private void AddData(){
@@ -44,5 +74,11 @@ public class RecyclerViewActivity extends AppCompatActivity {
         ImageList.add(
                 new GalleryImage(106,"Polar Bear",R.drawable.polar));
 
+    }
+
+    @Override
+    public void onItemClick(int i) {
+        if(i != -1)
+            imgViewLarge2.setImageResource(ImageList.get(i).getImgPic());
     }
 }
