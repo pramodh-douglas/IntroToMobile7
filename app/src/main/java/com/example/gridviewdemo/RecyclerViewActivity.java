@@ -5,6 +5,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,14 +21,27 @@ public class RecyclerViewActivity extends AppCompatActivity implements ImageRecy
 
     ImageView imgViewLarge2;
 
+    int selectedInd;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recycler_view);
         AddData();
 
+        // set stored preferences
+        SharedPreferences preferences = this.getPreferences(Context.MODE_PRIVATE);
+        // set selected index from the preferences
+        selectedInd = preferences.getInt(getString(R.string.txtImgInd), -1);
+
         RecyclerView recyclerViewImages = findViewById(R.id.recyclerViewImages);
         imgViewLarge2 = findViewById(R.id.imgViewLarge2);
+
+        if(selectedInd != -1) {
+            imgViewLarge2.setImageResource(ImageList.get(selectedInd).getImgPic());
+        } else {
+            imgViewLarge2.setImageResource(0);
+        }
 
         // ImageRecyclerViewAdapter myAdapter
         //        = new ImageRecyclerViewAdapter(ImageList);
@@ -78,7 +93,19 @@ public class RecyclerViewActivity extends AppCompatActivity implements ImageRecy
 
     @Override
     public void onItemClick(int i) {
-        if(i != -1)
+        if(i != -1) {
+            selectedInd = i;
             imgViewLarge2.setImageResource(ImageList.get(i).getImgPic());
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SharedPreferences preferences = this.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        // add data using following method
+        editor.putInt(getString(R.string.txtImgInd), selectedInd);
+        editor.apply();
     }
 }

@@ -3,4 +3,5 @@
     <string name="txtTitle">Picture Gallery</string>
     <string name="imgLargeDesc">Large Image</string>
     <string name="txtTitle2">Recycler View Images</string>
+    <string name="txtImgInd">IMGIND</string>
 </resources>
